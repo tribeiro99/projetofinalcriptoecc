@@ -1,16 +1,10 @@
+(doce) ribeiro@ribeiro-MS-7D23:~/Transferências/projfinal-20240903T235731Z-001/projfinal$ cat meuecc.py 
 import random
 import math
 import hashlib
-import Cryptodome
-from Cryptodome.Cipher import AES
-from Cryptodome.Util.Padding import pad, unpad
-# Chave pública usada no algoritmo ECC, G representa um ponto gerador na curva e representa a multiplicação escalar
-# A partir da fórmula para gerar a chave pública:
-# K = k * G
-# G é o ponto gerador da curva (um ponto fixo e conhecido por todos).
-# k é a chave privada (um número inteiro).
-# K é a chave pública (um ponto na curva elíptica).
-# A curva é definida pela equação y² = x³ + ax + b
+from Crypto.Cipher import AES
+from Crypto.Util.Padding import pad, unpad
+
 class CurvaEliptica:
     def __init__(self, a, b):
         self.a = a
@@ -55,7 +49,11 @@ class CurvaEliptica:
         criptografado = criptografado[AES.block_size:]
         cipher = AES.new(chave_secreta, AES.MODE_CBC, iv)
         mensagem_padded = cipher.decrypt(criptografado)
-        return unpad(mensagem_padded, AES.block_size).decode()
+        try:
+            return unpad(mensagem_padded, AES.block_size).decode()
+        except ValueError as e:
+            print("Erro ao descompactar a mensagem:", e)
+            return None
 
 if __name__ == "__main__":
     curva = CurvaEliptica(2, 3)
@@ -71,10 +69,13 @@ if __name__ == "__main__":
     chave_secreta1 = curva.derivar_chave_secreta(ponto_comum1)
     chave_secreta2 = curva.derivar_chave_secreta(ponto_comum2)
 
-    mensagem = "Mensagem secreta"
+    chave_secreta1 = chave_secreta1[:32]  
+    chave_secreta2 = chave_secreta2[:32]  
+
+    mensagem = "A minha mensagem esta criptografada"
     criptografado = curva.criptografar(mensagem, chave_secreta1)
     print(f"Mensagem criptografada: {criptografado}")
 
-    descriptografado = curva.descriptografar(criptografado, chave_secreta2)
+    descriptografado = curva.descriptografar(criptografado, chave_secreta1)
     print(f"Mensagem descriptografada: {descriptografado}")
 
