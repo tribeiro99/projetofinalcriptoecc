@@ -1,4 +1,3 @@
-(doce) ribeiro@ribeiro-MS-7D23:~/Transferências/projfinal-20240903T235731Z-001/projfinal$ cat meuecc.py 
 import random
 import math
 import hashlib
@@ -72,7 +71,7 @@ if __name__ == "__main__":
     chave_secreta1 = chave_secreta1[:32]  
     chave_secreta2 = chave_secreta2[:32]  
 
-    mensagem = "A minha mensagem esta criptografada"
+    mensagem = input("Digite a mensagem pa criptografar: ")
     criptografado = curva.criptografar(mensagem, chave_secreta1)
     print(f"Mensagem criptografada: {criptografado}")
 
